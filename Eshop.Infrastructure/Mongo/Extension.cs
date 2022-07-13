@@ -19,6 +19,7 @@ namespace Eshop.Infrastructure.Mongo
 
             services.AddSingleton<IMongoClient>(client =>
             {
+                //Keeps a single Mongo client throughout the entire applications and all Microservices.
                 return new MongoClient(mongoConfig.ConnectionString);
             });
             services.AddSingleton<IMongoDatabase>(client =>
