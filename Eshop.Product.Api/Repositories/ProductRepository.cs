@@ -1,5 +1,6 @@
 ﻿using Eshop.Product.Api.Services;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 
 namespace Eshop.Product.Api.Repositories
 {
@@ -13,14 +14,27 @@ namespace Eshop.Product.Api.Repositories
             _database = database;
             _collection = database.GetCollection<CreateProduct>("product");
         }
-        Task<ProductCreated> IProductRepository.AddProduct(CreateProduct product)
+        public async Task<ProductCreated> AddProduct(CreateProduct product)
         {
-            throw new NotImplementedException();
+            await _collection.InsertOneAsync(product);
+            return new ProductCreated
+            {
+                ProductId = product.ProductId,
+                ProductName = product.ProductName,
+                CreatedAt = DateTime.UtcNow
+            };
         }
 
-        Task<ProductCreated> IProductRepository.GetProduct(Guid ProductId)
+        public async Task<ProductCreated> GetProduct(string ProductId)
         {
-            throw new NotImplementedException();
+            var product = new CreateProduct();
+            product = await _collection.AsQueryable().FirstOrDefaultAsync(
+                p => p.ProductId == ProductId);
+            return new ProductCreated() 
+            { 
+                ProductId = product.ProductId, 
+                ProductName = product.ProductName 
+            };
         }
     }
 }

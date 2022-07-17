@@ -1,15 +1,24 @@
-﻿namespace Eshop.Product.Api.Services
+﻿using Eshop.Product.Api.Repositories;
+
+namespace Eshop.Product.Api.Services
 {
     public class ProductService : IProductService
-    {
-        Task<ProductCreated> IProductService.AddProduct(CreateProduct createProduct)
+    { 
+        private IProductRepository _repository { get; }
+        public ProductService(IProductRepository repository)
         {
-            throw null;
+            _repository = repository;
+        }
+       
+        public async Task<ProductCreated> AddProduct(CreateProduct product)
+        {
+            return await _repository.AddProduct(product);
         }
 
-        Task<ProductCreated> IProductService.GetProduct(Guid ProductId)
+        public async Task<ProductCreated> GetProduct(string ProductId)
         {
-            throw null;
+            var product = await _repository.GetProduct(ProductId);
+            return product;
         }
     }
 }

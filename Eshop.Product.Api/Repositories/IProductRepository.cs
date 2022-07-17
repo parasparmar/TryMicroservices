@@ -4,8 +4,8 @@ namespace Eshop.Product.Api.Repositories
 {
     public interface IProductRepository
     {
-        Task<ProductCreated> GetProduct(Guid ProductId);
-        Task<ProductCreated> AddProduct(CreateProduct product);
+        public  Task<ProductCreated> GetProduct(string ProductId);
+        public  Task<ProductCreated> AddProduct(CreateProduct product);
 
     }
 }

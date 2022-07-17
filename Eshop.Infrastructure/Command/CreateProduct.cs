@@ -1,6 +1,12 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Eshop.Product.Api.Services
+
+namespace Eshop.Infrastructure.Command.Product
 {
     public class CreateProduct
     {
@@ -11,5 +17,6 @@ namespace Eshop.Product.Api.Services
         public string ProductDescription { get; set; }
         public float ProductPrice { get; set; }
         public Guid CategoryId { get; set; }
+
     }
 }
