@@ -1,11 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB;
 using MongoDB.Driver;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Eshop.Infrastructure.Mongo
 {
@@ -16,15 +12,16 @@ namespace Eshop.Infrastructure.Mongo
             var configSection = configuration.GetSection("mongo");
             var mongoConfig = new MongoConfig();
             configSection.Bind(mongoConfig);
-
+            // Replace <connection string> with your MongoDB deployment's connection string.
+            var mongoClient = new MongoClient(mongoConfig.ConnectionString);
             services.AddSingleton<IMongoClient>(client =>
             {
                 //Keeps a single Mongo client throughout the entire applications and all Microservices.
-                return new MongoClient(mongoConfig.ConnectionString);
+                return mongoClient;
             });
             services.AddSingleton<IMongoDatabase>(client =>
             {
-                var mongoClient = client.GetService<MongoClient>();
+                
                 return mongoClient.GetDatabase(mongoConfig.Database);
             });
 

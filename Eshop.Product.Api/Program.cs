@@ -1,4 +1,3 @@
-using System.Configuration;
 using Eshop.Infrastructure.Mongo;
 using Eshop.Product.Api.Repositories;
 using Eshop.Product.Api.Services;
@@ -21,13 +20,14 @@ namespace Eshop.Product.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            #region-- MongoDb Config--            
+            IConfiguration ic = builder.Configuration;
+            builder.Services.AddMongoDb(ic);
+            #endregion
+
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<IProductService, ProductService>();
             //builder.Services.AddScoped<CreateProductHandler>();
-                        
-            #region-- MongoDb Config--            
-            builder.Services.AddMongoDb(builder.Configuration);
-            #endregion
 
             #region-- RabbitMq Config--
             //var rabbitMqOption = new RabbitMQOption();
@@ -69,7 +69,7 @@ namespace Eshop.Product.Api
                 app.UseSwaggerUI();
             }
 
-            app.UseAuthorization();
+            //app.UseAuthorization();
             app.MapControllers();
             app.Run();
         }
