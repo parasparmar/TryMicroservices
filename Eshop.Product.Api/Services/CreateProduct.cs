@@ -4,8 +4,7 @@ namespace Eshop.Product.Api.Services
 {
     public class CreateProduct
     {
-        [BsonId]
-        [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
+        [BsonId]        
         public string ProductId { get; set; }
         public string ProductName { get; set; }
         public string ProductDescription { get; set; }

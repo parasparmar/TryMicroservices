@@ -16,6 +16,7 @@ namespace Eshop.Product.Api.Repositories
         }
         public async Task<ProductCreated> AddProduct(CreateProduct product)
         {
+            
             await _collection.InsertOneAsync(product);
             return new ProductCreated
             {
