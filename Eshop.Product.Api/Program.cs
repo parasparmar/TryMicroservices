@@ -26,7 +26,7 @@ namespace Eshop.Product.Api
 
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<IProductService, ProductService>();
-            //builder.Services.AddScoped<CreateProductHandler>();
+            builder.Services.AddScoped<CreateProductHandler>();
 
             #region-- RabbitMq Config--
             var rabbitMqOption = new RabbitMQOption();
@@ -37,7 +37,7 @@ namespace Eshop.Product.Api
             #region-- Mass Transit Eventbus with RabbitMq Config--
             builder.Services.AddMassTransit(x =>
             {
-                x.AddConsumer<CreateProductHandler>
+                x.AddConsumer<CreateProductHandler>();
                 x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(cfg =>
                     {
                         cfg.Host(new Uri(rabbitMqOption.ConnectionString), hostconfig =>
@@ -56,7 +56,8 @@ namespace Eshop.Product.Api
             #endregion
             
             var app = builder.Build();
-            var busControl = app.ApplicationServices.GetService
+            var busControl = app.Services.GetService<IBusControl>();
+            busControl.Start();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
