@@ -15,8 +15,7 @@ namespace Eshop.Product.Api
         {
             var builder = WebApplication.CreateBuilder(args);
             // Add services to the container.
-            builder.Services.AddControllers();
-            
+            builder.Services.AddControllers();            
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
@@ -30,38 +29,34 @@ namespace Eshop.Product.Api
             //builder.Services.AddScoped<CreateProductHandler>();
 
             #region-- RabbitMq Config--
-            //var rabbitMqOption = new RabbitMQOption();
-            //configuration.GetSection("rabbitmq").Bind(rabbitMqOption);
-            //builder.Services.AddRabbitMq(configuration.GetSection("rabbitmq"));
+            var rabbitMqOption = new RabbitMQOption();
+            ic.GetSection("rabbitmq").Bind(rabbitMqOption);
+            builder.Services.AddRabbitMq(ic.GetSection("rabbitmq"));
             #endregion
 
             #region-- Mass Transit Eventbus with RabbitMq Config--
-            //builder.Services.AddMassTransit(mt =>
-            //{
-            //    mt.AddMassTransit(mt =>
-            //    {
-            //        //mt.AddConsumer<CreateProduct>();
-            //        mt.AddBus(provider =>
-            //        Bus.Factory.CreateUsingRabbitMq(rmqCfg =>
-            //        {
-            //            rmqCfg.Host(new Uri(rabbitMqOption.ConnectionString), rmqHost =>
-            //                        {
-            //                            rmqHost.Username(rabbitMqOption.Username);
-            //                            rmqHost.Password(rabbitMqOption.Password);
-            //                        });
-            //            rmqCfg.ReceiveEndpoint("create_product", ep =>
-            //            {
-            //                ep.PrefetchCount = 16;
-            //                ep.UseMessageRetry(rtrycfg => { rtrycfg.Interval(2, 100); });
-            //                //ep.ConfigureConsumer<CreateProduct>(provider);
-            //            });
-            //        }));
-            //    });
-            //});
+            builder.Services.AddMassTransit(x =>
+            {
+                x.AddConsumer<CreateProductHandler>
+                x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(cfg =>
+                    {
+                        cfg.Host(new Uri(rabbitMqOption.ConnectionString), hostconfig =>
+                                    {
+                                        hostconfig.Username(rabbitMqOption.Username);
+                                        hostconfig.Password(rabbitMqOption.Password);
+                                    });
+                        cfg.ReceiveEndpoint("create_product", ep =>
+                        {
+                            ep.PrefetchCount = 16;
+                            ep.UseMessageRetry(rtrycfg => { rtrycfg.Interval(2, 100); });
+                            ep.ConfigureConsumer<CreateProductHandler>(provider);
+                        });
+                    }));
+            });
             #endregion
-
+            
             var app = builder.Build();
-
+            var busControl = app.ApplicationServices.GetService
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
