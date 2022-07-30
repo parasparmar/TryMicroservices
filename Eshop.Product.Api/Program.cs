@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Eshop.Infrastructure.EventBus;
 using MassTransit;
 using ConfigurationManager = Microsoft.Extensions.Configuration.ConfigurationManager;
+using EShop.Product.Api;
 
 namespace Eshop.Product.Api
 {
